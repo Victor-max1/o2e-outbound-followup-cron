@@ -1,0 +1,27 @@
+name: Outbound Followup Automation
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: outbound-followup
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - run: python outbound_followup_automation.py --apply
+        env:
+          ATTIO_API_KEY: ${{ secrets.ATTIO_API_KEY }}
